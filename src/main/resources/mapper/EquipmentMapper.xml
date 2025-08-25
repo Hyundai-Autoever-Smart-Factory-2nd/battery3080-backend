@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.EquipmentMapper">
+
+    <resultMap id="EquipmentResultMap" type="com.example.demo.model.Equipment">
+        <id property="equipmentId" column="equipment_id"/>
+        <result property="name" column="name"/>
+        <!-- 관계 매핑 : Equipment (1) - (N) Model -->
+        <collection property="models" ofType="com.example.demo.model.Model" column="equipment_id"
+                    select="com.example.demo.mapper.ModelMapper.findByEquipmentId"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EquipmentResultMap">
+        SELECT * FROM equipments
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="EquipmentResultMap">
+        SELECT * FROM equipments WHERE equipment_id = #{equipmentId}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.model.Equipment"
+            useGeneratedKeys="true" keyProperty="equipmentId">
+        INSERT INTO equipments(name) VALUES(#{name})
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.model.Equipment">
+        UPDATE equipments SET name = #{name}
+        WHERE equipment_id = #{equipmentId}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM equipments WHERE equipment_id = #{equipmentId}
+    </delete>
+</mapper>
