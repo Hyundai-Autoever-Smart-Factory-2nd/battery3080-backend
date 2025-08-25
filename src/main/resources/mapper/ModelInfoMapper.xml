@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ModelInfoMapper">
+
+    <resultMap id="ModelInfoResultMap" type="com.example.demo.model.ModelInfo">
+        <id property="modelInfosId" column="model_infos_id"/>
+        <result property="modelId" column="model_id"/>
+        <result property="modelNum" column="model_num"/>
+        <result property="installedAt" column="installed_at"/>
+        <result property="factoryId" column="factory_id"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ModelInfoResultMap">
+        SELECT * FROM model_infos
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="ModelInfoResultMap">
+        SELECT * FROM model_infos WHERE model_infos_id = #{modelInfosId}
+    </select>
+
+    <select id="findByModelId" parameterType="long" resultMap="ModelInfoResultMap">
+        SELECT * FROM model_infos WHERE model_id = #{modelId}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.model.ModelInfo"
+            useGeneratedKeys="true" keyProperty="modelInfosId">
+        INSERT INTO model_infos(model_id, model_num, installed_at, factory_id)
+        VALUES (#{modelId}, #{modelNum}, #{installedAt}, #{factoryId})
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.model.ModelInfo">
+        UPDATE model_infos
+        SET model_id = #{modelId},
+        model_num = #{modelNum},
+        installed_at = #{installedAt},
+        factory_id = #{factoryId}
+        WHERE model_infos_id = #{modelInfosId}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM model_infos WHERE model_infos_id = #{modelInfosId}
+    </delete>
+</mapper>
