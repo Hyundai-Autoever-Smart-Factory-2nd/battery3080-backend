@@ -12,6 +12,13 @@ public interface EquipmentMapper {
 
     Equipment findById(@Param("equipmentId") Long equipmentId);// 특정 장비 조회
 
+    List<Equipment> findByEquipmentAndFactory(
+            @Param("equipmentId") Long equipmentId,
+            @Param("factoryId") String factoryId,
+            @Param("offset") int offset,
+            @Param("size") int size
+    );
+
     void insert(Equipment equipment);  // 신규 장비 등록
 
     void update(Equipment equipment);  // 장비 수정
