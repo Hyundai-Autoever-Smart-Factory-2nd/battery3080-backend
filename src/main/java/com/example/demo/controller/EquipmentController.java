@@ -27,7 +27,7 @@ public class EquipmentController {
     @GetMapping("/status")
     public EquipmentStatusResponse getEquipmentStatus(
             @RequestParam("equipmentId") Long equipmentId,
-            @RequestParam("factoryId") Long factoryId,
+            @RequestParam("factoryId") String factoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size
     ) {
