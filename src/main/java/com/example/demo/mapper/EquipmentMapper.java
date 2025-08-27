@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.EquipmentStatusResponse;
 import com.example.demo.model.Equipment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,9 +13,9 @@ public interface EquipmentMapper {
 
     Equipment findById(@Param("equipmentId") Long equipmentId);// 특정 장비 조회
 
-    List<Equipment> findByEquipmentAndFactory(
+    List<EquipmentStatusResponse> findByEquipmentAndFactory(
             @Param("equipmentId") Long equipmentId,
-            @Param("factoryId") String factoryId,
+            @Param("factoryId") Long factoryId,
             @Param("offset") int offset,
             @Param("size") int size
     );
