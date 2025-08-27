@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface EquipmentMapper {
-
     List<Equipment> findAll();  // 전체 장비 조회
 
     Equipment findById(@Param("equipmentId") Long equipmentId);// 특정 장비 조회
