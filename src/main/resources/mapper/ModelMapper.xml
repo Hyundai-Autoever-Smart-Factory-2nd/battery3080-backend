@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ModelMapper">
+
+    <resultMap id="ModelResultMap" type="com.example.demo.model.Model">
+        <id property="modelId" column="model_id"/>
+        <result property="equipmentId" column="equipment_id"/>
+        <result property="weight" column="weight"/>
+        <result property="speed" column="speed"/>
+        <result property="image" column="image"/>
+        <result property="width" column="width"/>
+        <result property="length" column="length"/>
+        <result property="height" column="height"/>
+        <!-- 관계 매핑 : Model (1) - (N) ModelInfo -->
+        <collection property="modelInfos" ofType="com.example.demo.model.ModelInfo" column="model_id"
+                    select="com.example.demo.mapper.ModelInfoMapper.findByModelId"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ModelResultMap">
+        SELECT * FROM models
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE model_id = #{modelId}
+    </select>
+
+    <select id="findByEquipmentId" parameterType="long" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE equipment_id = #{equipmentId}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.model.Model"
+            useGeneratedKeys="true" keyProperty="modelId">
+        INSERT INTO models(equipment_id, weight, speed, image, width, length, height)
+        VALUES (#{equipmentId}, #{weight}, #{speed}, #{image}, #{width}, #{length}, #{height})
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.model.Model">
+        UPDATE models
+        SET equipment_id = #{equipmentId},
+        weight = #{weight},
+        speed = #{speed},
+        image = #{image},
+        width = #{width},
+        length = #{length},
+        height = #{height}
+        WHERE model_id = #{modelId}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM models WHERE model_id = #{modelId}
+    </delete>
+</mapper>
