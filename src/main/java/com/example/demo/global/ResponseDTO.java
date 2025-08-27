@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ResponseDTO<T> {
-    private boolean success;   // 요청 성공 여부
-    private int status;        // HTTP Status Code
-    private List<T> data;      // 응답 데이터 (리스트 형태)
+    private boolean success;
+    private int status;
+    private T data;
 }
