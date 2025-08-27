@@ -1,12 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Home;
+import com.example.demo.global.ResponseDTO;
 import com.example.demo.service.HomeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 public class HomeController {
@@ -18,7 +16,7 @@ public class HomeController {
     }
 
     @GetMapping("/api/home")
-    public List<Home> getHomeData() {
-        return Collections.singletonList(homeService.getHomeData());
+    public ResponseEntity<ResponseDTO<?>> getHomeData() {
+        return homeService.getHomeData(); // 라우팅만 담당
     }
 }
