@@ -28,11 +28,11 @@ public class TestController {
                 ResponseDTO<Home> failResponse = ResponseDTO.<Home>builder()
                         .success(false)
                         .status(HttpStatus.NOT_FOUND.value())
-                        .data(Collections.singletonList(
+                        .data(
                                 new Home() {{
                                     setTarget_object(0);
                                 }}
-                        ))
+                        )
                         .build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(failResponse);
             }
@@ -40,7 +40,7 @@ public class TestController {
             ResponseDTO<Home> successResponse = ResponseDTO.<Home>builder()
                     .success(true)
                     .status(HttpStatus.OK.value())
-                    .data(Collections.singletonList(home))
+                    .data(home)
                     .build();
 
             return ResponseEntity.ok(successResponse);
@@ -49,11 +49,11 @@ public class TestController {
             ResponseDTO<Home> errorResponse = ResponseDTO.<Home>builder()
                     .success(false)
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .data(Collections.singletonList(
+                    .data(
                             new Home() {{
                                 setTarget_object(0);
                             }}
-                    ))
+                    )
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
