@@ -1,42 +1,51 @@
 package com.example.demo.model;
 
 public class Home {
-    private double avgBattery;   // AGV 평균 배터리
-    private int alertCount;      // 배터리 경고 수
-    private String equipmentName; // 장비 이름
+    private long target_object;
+    private long succeed_object;
+    private long failed_object;
+    private long total_object;
+    private long AGV_battery_wrong;
 
-    // 기본 생성자
+    private double factory1_AGV_battery_AVG;
+    private double factory2_AGV_battery_AVG;
+    private double factory3_AGV_battery_AVG;
+
     public Home() {}
 
-    // 전체 생성자
-    public Home(double avgBattery, int alertCount, String equipmentName) {
-        this.avgBattery = avgBattery;
-        this.alertCount = alertCount;
-        this.equipmentName = equipmentName;
+    public Home(long target_object, long succeed_object, long failed_object, long total_object,
+                long AGV_battery_wrong, double factory1_AVG, double factory2_AVG, double factory3_AVG) {
+        this.target_object = target_object;
+        this.succeed_object = succeed_object;
+        this.failed_object = failed_object;
+        this.total_object = total_object;
+        this.AGV_battery_wrong = AGV_battery_wrong;
+        this.factory1_AGV_battery_AVG = factory1_AVG;
+        this.factory2_AGV_battery_AVG = factory2_AVG;
+        this.factory3_AGV_battery_AVG = factory3_AVG;
     }
 
-    // Getter/Setter
-    public double getAvgBattery() {
-        return avgBattery;
-    }
+    public long getTarget_object() { return target_object; }
+    public void setTarget_object(long target_object) { this.target_object = target_object; }
 
-    public void setAvgBattery(double avgBattery) {
-        this.avgBattery = avgBattery;
-    }
+    public long getSucceed_object() { return succeed_object; }
+    public void setSucceed_object(long succeed_object) { this.succeed_object = succeed_object; }
 
-    public int getAlertCount() {
-        return alertCount;
-    }
+    public long getFailed_object() { return failed_object; }
+    public void setFailed_object(long failed_object) { this.failed_object = failed_object; }
 
-    public void setAlertCount(int alertCount) {
-        this.alertCount = alertCount;
-    }
+    public long getTotal_object() { return total_object; }
+    public void setTotal_object(long total_object) { this.total_object = total_object; }
 
-    public String getEquipmentName() {
-        return equipmentName;
-    }
+    public long getAGV_battery_wrong() { return AGV_battery_wrong; }
+    public void setAGV_battery_wrong(long AGV_battery_wrong) { this.AGV_battery_wrong = AGV_battery_wrong; }
 
-    public void setEquipmentName(String equipmentName) {
-        this.equipmentName = equipmentName;
-    }
+    public double getFactory1_AGV_battery_AVG() { return factory1_AGV_battery_AVG; }
+    public void setFactory1_AGV_battery_AVG(double factory1_AGV_battery_AVG) { this.factory1_AGV_battery_AVG = factory1_AGV_battery_AVG; }
+
+    public double getFactory2_AGV_battery_AVG() { return factory2_AGV_battery_AVG; }
+    public void setFactory2_AGV_battery_AVG(double factory2_AGV_battery_AVG) { this.factory2_AGV_battery_AVG = factory2_AGV_battery_AVG; }
+
+    public double getFactory3_AGV_battery_AVG() { return factory3_AGV_battery_AVG; }
+    public void setFactory3_AGV_battery_AVG(double factory3_AGV_battery_AVG) { this.factory3_AGV_battery_AVG = factory3_AGV_battery_AVG; }
 }
