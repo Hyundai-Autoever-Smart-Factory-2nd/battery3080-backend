@@ -7,9 +7,13 @@ public class Home {
     private long total_object;
     private long AGV_battery_wrong;
 
-    private double factory1_AGV_battery_AVG;
-    private double factory2_AGV_battery_AVG;
-    private double factory3_AGV_battery_AVG;
+    private double factory1_avg_speed;
+    private double factory2_avg_speed;
+    private double factory3_avg_speed;
+
+    private double factory1_avg_weight;
+    private double factory2_avg_weight;
+    private double factory3_avg_weight;
 
     public Home() {}
 
@@ -20,9 +24,6 @@ public class Home {
         this.failed_object = failed_object;
         this.total_object = total_object;
         this.AGV_battery_wrong = AGV_battery_wrong;
-        this.factory1_AGV_battery_AVG = factory1_AVG;
-        this.factory2_AGV_battery_AVG = factory2_AVG;
-        this.factory3_AGV_battery_AVG = factory3_AVG;
     }
 
     public long getTarget_object() { return target_object; }
@@ -40,12 +41,21 @@ public class Home {
     public long getAGV_battery_wrong() { return AGV_battery_wrong; }
     public void setAGV_battery_wrong(long AGV_battery_wrong) { this.AGV_battery_wrong = AGV_battery_wrong; }
 
-    public double getFactory1_AGV_battery_AVG() { return factory1_AGV_battery_AVG; }
-    public void setFactory1_AGV_battery_AVG(double factory1_AGV_battery_AVG) { this.factory1_AGV_battery_AVG = factory1_AGV_battery_AVG; }
+    public double getFactory1_avg_speed() {return factory1_avg_speed;}
+    public void setFactory1_avg_speed(double factory1_avg_speed) {this.factory1_avg_speed = factory1_avg_speed;}
 
-    public double getFactory2_AGV_battery_AVG() { return factory2_AGV_battery_AVG; }
-    public void setFactory2_AGV_battery_AVG(double factory2_AGV_battery_AVG) { this.factory2_AGV_battery_AVG = factory2_AGV_battery_AVG; }
+    public double getFactory2_avg_speed() {return factory2_avg_speed;}
+    public void setFactory2_avg_speed(double factory2_avg_speed) {this.factory2_avg_speed = factory2_avg_speed;}
 
-    public double getFactory3_AGV_battery_AVG() { return factory3_AGV_battery_AVG; }
-    public void setFactory3_AGV_battery_AVG(double factory3_AGV_battery_AVG) { this.factory3_AGV_battery_AVG = factory3_AGV_battery_AVG; }
+    public double getFactory3_avg_speed() {return factory3_avg_speed;}
+    public void setFactory3_avg_speed(double factory3_avg_speed) {this.factory3_avg_speed = factory3_avg_speed;}
+
+    public double getFactory1_avg_weight() {return factory1_avg_weight;}
+    public void setFactory1_avg_weight(double factory1_avg_weight) {this.factory1_avg_weight = factory1_avg_weight;}
+
+    public double getFactory2_avg_weight() {return factory2_avg_weight;}
+    public void setFactory2_avg_weight(double factory2_avg_weight) {this.factory2_avg_weight = factory2_avg_weight;}
+
+    public double getFactory3_avg_weight() {return factory3_avg_weight;}
+    public void setFactory3_avg_weight(double factory3_avg_weight) {this.factory3_avg_weight = factory3_avg_weight;}
 }
