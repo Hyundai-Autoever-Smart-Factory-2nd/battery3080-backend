@@ -17,6 +17,33 @@
         SELECT * FROM equipments
     </select>
 
+    <select id="findByEquipmentAndFactory"
+            resultType="com.example.demo.dto.EquipmentStatusResponse">
+        SELECT
+            e.equipment_id AS equipmentId,
+            e.name AS name,
+            mi.model_num AS modelNum
+        FROM equipments e
+        JOIN models m ON e.equipment_id = m.equipment_id
+        JOIN model_infos mi ON m.model_id = mi.model_id
+        WHERE e.equipment_id = #{equipmentId}
+        AND mi.factory_id = #{factoryId}
+    </select>
+
+<!--    &lt;!&ndash; EquipmentMapper.xml &ndash;&gt;-->
+<!--    <select id="findByEquipmentAndFactory" resultType="com.example.demo.model.Equipment">-->
+<!--        SELECT-->
+<!--        e.equipment_id AS equipmentId,-->
+<!--        e.name AS name-->
+<!--        FROM equipments e-->
+<!--        JOIN models m ON e.equipment_id = m.equipment_id-->
+<!--        JOIN model_infos mi ON m.model_id = mi.model_id-->
+<!--        WHERE e.equipment_id = #{equipmentId}-->
+<!--        AND mi.factory_id = #{factoryId}-->
+<!--        LIMIT #{size} OFFSET #{offset}-->
+
+<!--    </select>-->
+
     <select id="findById" parameterType="long" resultMap="EquipmentResultMap">
         SELECT * FROM equipments WHERE equipment_id = #{equipmentId}
     </select>

@@ -69,5 +69,4 @@ public class EquipmentDetailResponse {
         this.logs = logs;
     }
 
-    // getter/setter
 }
