@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface HomeMapper {
     
-    @Select("SELECT CASE WHEN COUNT(dl.model_infos_id) = 0 THEN NULL ELSE COUNT(dl.model_infos_id) END AS cnt " +
+    @Select("SELECT COUNT(dl.model_infos_id) " +
             "FROM model_infos mi " +
             "JOIN models m ON mi.model_id = m.model_id " +
             "JOIN (SELECT model_infos_id,MAX(timestamp) AS max_ts " +
@@ -16,7 +16,7 @@ public interface HomeMapper {
             "WHERE dl.temp > 70 AND m.equipment_id = 1")
     Long getAgvBatteryWrong();
 
-    @Select("SELECT CASE WHEN COUNT(dl.model_infos_id) = 0 THEN NULL ELSE COUNT(dl.model_infos_id) END AS cnt " +
+    @Select("SELECT COUNT(dl.model_infos_id) " +
             "FROM model_infos mi " +
             "JOIN models m ON mi.model_id = m.model_id " +
             "JOIN (SELECT model_infos_id,MAX(timestamp) AS max_ts " +
@@ -26,7 +26,7 @@ public interface HomeMapper {
             "WHERE dl.temp > 70 AND m.equipment_id = 3")
     Long getRobotArmBatteryWrong();
 
-    @Select("SELECT CASE WHEN COUNT(dl.model_infos_id) = 0 THEN NULL ELSE COUNT(dl.model_infos_id) END AS cnt " +
+    @Select("SELECT COUNT(dl.model_infos_id) " +
             "FROM model_infos mi " +
             "JOIN models m ON mi.model_id = m.model_id " +
             "JOIN (SELECT model_infos_id,MAX(timestamp) AS max_ts " +
@@ -36,7 +36,7 @@ public interface HomeMapper {
             "WHERE dl.temp > 70 AND m.equipment_id = 2")
     Long getLiftCarBatteryWrong();
 
-    @Select("SELECT CASE WHEN COUNT(dl.model_infos_id) = 0 THEN NULL ELSE COUNT(dl.model_infos_id) END AS cnt " +
+    @Select("SELECT COUNT(dl.model_infos_id) " +
             "FROM model_infos mi " +
             "JOIN models m ON mi.model_id = m.model_id " +
             "JOIN (SELECT model_infos_id,MAX(timestamp) AS max_ts " +
