@@ -35,8 +35,8 @@ public class HomeService {
 
         home.setAchievement_target(target);
         home.setAchievement_achieved(succeed);
-        home.setDefect_production(failed);
-        home.setDefect_defective(total);
+        home.setDefect_production(total);
+        home.setDefect_defective(failed);
 
         home.setAgv_battery_wrong(agvWrong);
         home.setRobot_arm_battery_wrong(robotWrong);
