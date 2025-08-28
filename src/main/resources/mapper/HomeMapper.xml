@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.HomeMapper">
+
+    <!-- 평균 배터리 (랜덤 시뮬레이션용) -->
+    <select id="getBatteryData" resultType="com.example.demo.model.Home">
+        SELECT ROUND(RAND() * 100, 2) AS avgBattery,
+        'Factory 1' AS equipmentName,
+        0 AS alertCount
+    </select>
+
+    <!-- 장비별 배터리 경고 수 (랜덤 시뮬레이션용) -->
+    <select id="getBatteryAlertData" resultType="com.example.demo.model.Home">
+        SELECT '장비A' AS equipmentName, ROUND(RAND() * 10) AS alertCount, 0 AS avgBattery
+        UNION ALL
+        SELECT '장비B' AS equipmentName, ROUND(RAND() * 10) AS alertCount, 0 AS avgBattery
+        UNION ALL
+        SELECT '장비C' AS equipmentName, ROUND(RAND() * 10) AS alertCount, 0 AS avgBattery
+    </select>
+
+</mapper>
