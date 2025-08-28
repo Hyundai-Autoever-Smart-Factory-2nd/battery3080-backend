@@ -12,36 +12,140 @@ public interface HomeMapper {
             "WHERE mi.factory_id = '1'")
     Double getFactory1AvgSpeed();
 
-    @Select("SELECT AVG(m.speed) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '2'")
-    Double getFactory2AvgSpeed();
+    
+    @Select("SELECT COUNT(DISTINCT m.model_id)" +
+            "FROM model_infos mi" +
+            "JOIN models m ON mi.model_id = m.model_id" +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+            "WHERE dl.temp>70 AND m.equipment_id = 1")
+    Long getAgvBatteryWrong();
 
-    @Select("SELECT AVG(m.speed) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '3'")
-    Double getFactory3AvgSpeed();
+    @Select("SELECT COUNT(DISTINCT m.model_id)" +
+            "FROM model_infos mi" +
+            "JOIN models m ON mi.model_id = m.model_id" +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+            "WHERE dl.temp>70 AND m.equipment_id = 3")
+    Long getRobotArmBatteryWrong();
 
-    @Select("SELECT AVG(m.weight) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '1'")
-    Double getFactory1AvgWeight();
+    @Select("SELECT COUNT(DISTINCT m.model_id)" +
+            "FROM model_infos mi" +
+            "JOIN models m ON mi.model_id = m.model_id" +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+            "WHERE dl.temp>70 AND m.equipment_id = 2")
+    Long getLiftCarBatteryWrong();
 
-    @Select("SELECT AVG(m.weight) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '2'")
-    Double getFactory2AvgWeight();
+    @Select("SELECT COUNT(DISTINCT m.model_id)" +
+            "FROM model_infos mi" +
+            "JOIN models m ON mi.model_id = m.model_id" +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+            "WHERE dl.temp>70 AND m.equipment_id = 4")
+    Long getEtcBatteryWrong();
 
-    @Select("SELECT AVG(m.weight) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '3'")
-    Double getFactory3AvgWeight();
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 1 AND m.equipment_id = 1 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory1AgvAvg();
 
-    @Select("SELECT COUNT(*) FROM model_fix_log")
-    Long getModelFixCount();
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 1 AND m.equipment_id = 3 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory1RobotAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 1 AND m.equipment_id = 2 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory1LiftAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 2 AND m.equipment_id = 1 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory2AgvAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 2 AND m.equipment_id = 3 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory2RobotAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 2 AND m.equipment_id = 3 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory2LiftAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 3 AND m.equipment_id = 1 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory3AgvAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 3 AND m.equipment_id = 3 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory3RobotAvg();
+
+    @Select("SELECT AVG(dl.`c-rate`) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
+            "WHERE mi.factory_id = 3 AND m.equipment_id = 2 " +
+            "AND dl.timestamp = ( " +
+            "    SELECT MAX(dl2.timestamp) " +
+            "    FROM data_logs dl2 " +
+            "    WHERE dl2.model_infos_id = mi.model_infos_id " +
+            ")")
+    Double getFactory3LiftAvg();
 }
