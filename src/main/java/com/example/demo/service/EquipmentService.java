@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -72,19 +73,43 @@ public EquipmentStatusPageResponse getEquipmentStatusByType(
         // totalCount + data 반환
         return new EquipmentStatusPageResponse(totalCount, pagedList);
     }
-
     public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
-        ModelInfo modelInfo = modelInfoMapper.findById(modelInfosId);
+        EquipmentDetailResponse detail = equipmentMapper.getEquipmentDetail(modelInfosId);
 
-        return new EquipmentDetailResponse(
-                modelInfo.getModelInfosId(),
-                modelInfo.getModelNum(),
-                "GOOD",
-                85,
-                LocalDateTime.now(),
-                List.of("log1", "log2", "log3")
-        );
+        // ✅ 온도 로그 변환 부분
+        List<Map<String, Object>> rawTempLogs = equipmentMapper.getTemperatureLogs(modelInfosId);
+        List<List<Object>> formattedLogs = rawTempLogs.stream()
+                .map(entry -> List.of(
+                        entry.get("temp"),      // 온도 값
+                        entry.get("timestamp")  // 시간 값
+                ))
+                .toList();
+        detail.setTempLogs(formattedLogs);
+
+        // ✅ 오늘 상태별 카운트 매핑
+        Map<String, Object> statusCount = equipmentMapper.getTodayStatusCount(modelInfosId);
+        detail.setTotalCount(((Number) statusCount.get("totalCount")).intValue());
+        detail.setRunCount(((Number) statusCount.get("runCount")).intValue());
+        detail.setWaitCount(((Number) statusCount.get("waitCount")).intValue());
+        detail.setLoadCount(((Number) statusCount.get("loadCount")).intValue());
+        detail.setChargeCount(((Number) statusCount.get("chargeCount")).intValue());
+        detail.setCoolingCount(((Number) statusCount.get("coolingCount")).intValue());
+
+        return detail;
     }
+
+//    public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
+//        ModelInfo modelInfo = modelInfoMapper.findById(modelInfosId);
+//
+//        return new EquipmentDetailResponse(
+//                modelInfo.getModelInfosId(),
+//                modelInfo.getModelNum(),
+//                "GOOD",
+//                85,
+//                LocalDateTime.now(),
+//                List.of("log1", "log2", "log3")
+//        );
+//    }
 }
 
 
