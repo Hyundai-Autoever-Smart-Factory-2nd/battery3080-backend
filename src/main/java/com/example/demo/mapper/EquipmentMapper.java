@@ -19,6 +19,13 @@ public interface EquipmentMapper {
             @Param("offset") int offset,
             @Param("size") int size
     );
+    
+    // 상태별 총 개수 조회
+    int countByEquipmentAndFactoryWithStatus(
+            @Param("equipmentId") Long equipmentId,
+            @Param("factoryId") Long factoryId,
+            @Param("status") String status
+    );
 
     // 장비 기본/상세 조회
     EquipmentDetailResponse getEquipmentDetail(@Param("modelInfosId") Long modelInfosId);
