@@ -20,11 +20,9 @@ public class HomeService {
         this.homeMapper = homeMapper;
     }
 
-    // 실제 Home 객체 생성
     private Home createHome() {
         Home home = new Home();
 
-        // 각 라인 wrong 개수 (0~5 랜덤 fallback)
         long agvWrong   = getOrRandomLong(homeMapper::getAgvBatteryWrong, 5);
         long robotWrong = getOrRandomLong(homeMapper::getRobotArmBatteryWrong, 5);
         long liftWrong  = getOrRandomLong(homeMapper::getLiftCarBatteryWrong, 5);
