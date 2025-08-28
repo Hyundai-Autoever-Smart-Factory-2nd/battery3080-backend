@@ -18,4 +18,5 @@ public interface ModelInfoMapper {
     void update(ModelInfo modelInfo);
 
     void delete(@Param("modelInfosId") Long modelInfosId);
+
 }
