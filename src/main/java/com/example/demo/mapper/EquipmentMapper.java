@@ -31,8 +31,15 @@ public interface EquipmentMapper {
     EquipmentDetailResponse getEquipmentDetail(@Param("modelInfosId") Long modelInfosId);
 
     // 온도 로그 최근 10개
+    @Select("SELECT temp, timestamp FROM data_logs WHERE model_infos_id = #{modelInfosId} ORDER BY timestamp DESC LIMIT 10")
     List<Map<String, Object>> getTemperatureLogs(@Param("modelInfosId") Long modelInfosId);
 
     // 오늘 상태별 카운트
-    Map<String, Object> getTodayStatusCount(@Param("modelInfosId") Long modelInfosId);// 장비 삭제
+    Map<String, Object> getTodayStatusCount(@Param("modelInfosId") Long modelInfosId);
+    
+    @Select("SELECT COUNT(*) FROM equipments WHERE equipment_id = #{equipmentId}")
+    Long countByEquipmentId(@Param("equipmentId") Long equipmentId);
+    
+    @Select("SELECT * FROM equipments WHERE equipment_id = #{equipmentId}")
+    Map<String, Object> findById(@Param("equipmentId") Long equipmentId);
 }
