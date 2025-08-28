@@ -1,20 +1,34 @@
 package com.example.demo.service;
 
 import com.example.demo.global.ResponseDTO;
+import com.example.demo.mapper.HomeMapper;
 import com.example.demo.model.Home;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 @Service
 public class HomeService {
 
+    private final HomeMapper homeMapper;
     private final Random random = new Random();
 
-    private Home createHomeData() {
+    public HomeService(HomeMapper homeMapper) {
+        this.homeMapper = homeMapper;
+    }
+
+    // 실제 Home 객체 생성
+    private Home createHome() {
         Home home = new Home();
+
+        // 각 라인 wrong 개수 (0~5 랜덤 fallback)
+        long agvWrong   = getOrRandomLong(homeMapper::getAgvBatteryWrong, 5);
+        long robotWrong = getOrRandomLong(homeMapper::getRobotArmBatteryWrong, 5);
+        long liftWrong  = getOrRandomLong(homeMapper::getLiftCarBatteryWrong, 5);
+        long etcWrong   = getOrRandomLong(homeMapper::getEtcBatteryWrong, 5);
 
         long target = random.nextInt(10000) + 1L;
         long succeed = random.nextInt((int) target + 1);
@@ -26,41 +40,48 @@ public class HomeService {
         home.setDefect_production(failed);
         home.setDefect_defective(total);
 
-        home.setTotal_production(getOrRandom("total_production"));
-        home.setLine_a_production(getOrRandom("line_a_production"));
-        home.setLine_b_production(getOrRandom("line_b_production"));
-        home.setLine_c_production(getOrRandom("line_c_production"));
-        home.setLine_d_production(getOrRandom("line_d_production"));
-        home.setQuality_defective(getOrRandom("quality_defective"));
-        home.setQuality_rework(getOrRandom("quality_rework"));
-        home.setQuality_waste(getOrRandom("quality_waste"));
-        home.setOperation_workers(getOrRandom("operation_workers"));
-        home.setOperation_equipment(getOrRandom("operation_equipment"));
-        home.setOperation_downtime(getOrRandom("operation_downtime"));
-        home.setResource_material(getOrRandom("resource_material"));
-        home.setResource_energy(getOrRandom("resource_energy"));
-        home.setResource_efficiency(getOrRandom("resource_efficiency"));
+        home.setAgv_battery_wrong(agvWrong);
+        home.setRobot_arm_battery_wrong(robotWrong);
+        home.setLift_car_battery_wrong(liftWrong);
+        home.setEtc_battery_wrong(etcWrong);
+        home.setTotal_battery_wrong(agvWrong + robotWrong + liftWrong + etcWrong);
+
+        home.setFactory1_agv_avg(getOrRandomDouble(homeMapper::getFactory1AgvAvg));
+        home.setFactory1_robot_avg(getOrRandomDouble(homeMapper::getFactory1RobotAvg));
+        home.setFactory1_lift_avg(getOrRandomDouble(homeMapper::getFactory1LiftAvg));
+
+        home.setFactory2_agv_avg(getOrRandomDouble(homeMapper::getFactory2AgvAvg));
+        home.setFactory2_robot_avg(getOrRandomDouble(homeMapper::getFactory2RobotAvg));
+        home.setFactory2_lift_avg(getOrRandomDouble(homeMapper::getFactory2LiftAvg));
+
+        home.setFactory3_agv_avg(getOrRandomDouble(homeMapper::getFactory3AgvAvg));
+        home.setFactory3_robot_avg(getOrRandomDouble(homeMapper::getFactory3RobotAvg));
+        home.setFactory3_lift_avg(getOrRandomDouble(homeMapper::getFactory3LiftAvg));
 
         return home;
     }
 
-    private int getOrRandom(String key) {
-        Integer dbValue = null;
-        return (dbValue != null) ? dbValue : random.nextInt(100) + 1;
+    private long getOrRandomLong(Supplier<Long> supplier, int maxRandom) {
+        try {
+            Long value = supplier.get();
+            return value != null ? value : random.nextInt(maxRandom + 1);
+        } catch (Exception e) {
+            return random.nextInt(maxRandom + 1);
+        }
+    }
+
+    private double getOrRandomDouble(Supplier<Double> supplier) {
+        try {
+            Double value = supplier.get();
+            return value != null ? value : random.nextDouble() * 99 + 1;
+        } catch (Exception e) {
+            return random.nextDouble() * 99 + 1;
+        }
     }
 
     public ResponseEntity<ResponseDTO<?>> getHomeData() {
         try {
-            Home home = createHomeData();
-
-            if (home == null) {
-                ResponseDTO<String> failResponse = ResponseDTO.<String>builder()
-                        .success(false)
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .data("요청한 데이터를 생성할 수 없습니다.")
-                        .build();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(failResponse);
-            }
+            Home home = createHome();
 
             ResponseDTO<Home> successResponse = ResponseDTO.<Home>builder()
                     .success(true)
@@ -80,4 +101,3 @@ public class HomeService {
         }
     }
 }
-
