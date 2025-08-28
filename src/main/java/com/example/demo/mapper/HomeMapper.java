@@ -13,7 +13,7 @@ public interface HomeMapper {
             "FROM data_logs GROUP BY model_infos_id " +
             ") dl_max ON mi.model_infos_id = dl_max.model_infos_id " +
             "JOIN data_logs dl ON dl.model_infos_id = dl_max.model_infos_id AND dl.timestamp = dl_max.max_ts " +
-            "WHERE dl.temp > 40 OR dl.temp< 15 AND m.equipment_id = 1")
+            "WHERE dl.temp > 40 OR dl.temp < 15 AND m.equipment_id = 1")
     Long getAgvBatteryWrong();
 
     @Select("SELECT COUNT(dl.model_infos_id) " +
@@ -23,7 +23,7 @@ public interface HomeMapper {
             "FROM data_logs GROUP BY model_infos_id " +
             ") dl_max ON mi.model_infos_id = dl_max.model_infos_id " +
             "JOIN data_logs dl ON dl.model_infos_id = dl_max.model_infos_id AND dl.timestamp = dl_max.max_ts " +
-            "WHERE dl.temp > 40 OR dl.temp< 15 AND m.equipment_id = 3")
+            "WHERE dl.temp > 40 OR dl.temp < 15 AND m.equipment_id = 3")
     Long getRobotArmBatteryWrong();
 
     @Select("SELECT COUNT(dl.model_infos_id) " +
@@ -33,7 +33,7 @@ public interface HomeMapper {
             "FROM data_logs GROUP BY model_infos_id " +
             ") dl_max ON mi.model_infos_id = dl_max.model_infos_id " +
             "JOIN data_logs dl ON dl.model_infos_id = dl_max.model_infos_id AND dl.timestamp = dl_max.max_ts " +
-            "WHERE dl.temp > 40 OR dl.temp< 15 AND m.equipment_id = 2")
+            "WHERE dl.temp > 40 OR dl.temp < 15 AND m.equipment_id = 2")
     Long getLiftCarBatteryWrong();
 
     @Select("SELECT COUNT(dl.model_infos_id) " +
@@ -43,7 +43,7 @@ public interface HomeMapper {
             "FROM data_logs GROUP BY model_infos_id " +
             ") dl_max ON mi.model_infos_id = dl_max.model_infos_id " +
             "JOIN data_logs dl ON dl.model_infos_id = dl_max.model_infos_id AND dl.timestamp = dl_max.max_ts " +
-            "WHERE dl.temp > 40 OR dl.temp< 15 AND m.equipment_id = 4")
+            "WHERE dl.temp > 40 OR dl.temp < 15 AND m.equipment_id = 4")
     Long getEtcBatteryWrong();
 
     @Select("SELECT AVG(dl.`c-rate`) " +
