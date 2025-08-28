@@ -20,12 +20,12 @@
     <select id="findByEquipmentAndFactory"
             resultType="com.example.demo.dto.EquipmentStatusResponse">
         SELECT
-        e.equipment_id    AS equipmentId,
-        e.name            AS name,
-        mi.model_num      AS modelNum,
-        mi.model_infos_id AS modelInfosId,
-        dl.`c-rate`       AS cRate,
-        dl.temp           AS temp
+            e.equipment_id    AS equipmentId,
+            e.name            AS name,
+            mi.model_num      AS modelNum,
+            mi.model_infos_id AS modelInfosId,
+            dl.`c-rate`       AS cRate,
+            dl.temp           AS temp
         FROM equipments e
         JOIN models m ON e.equipment_id = m.equipment_id
         JOIN model_infos mi ON m.model_id = mi.model_id
@@ -63,4 +63,47 @@
     <delete id="delete" parameterType="long">
         DELETE FROM equipments WHERE equipment_id = #{equipmentId}
     </delete>
+
+    <!-- 장비 기본/상세 조회 -->
+    <select id="getEquipmentDetail" resultType="com.example.demo.dto.EquipmentDetailResponse">
+        SELECT
+        mi.model_infos_id AS modelInfosId,
+        mi.model_num      AS modelNum,
+        dl.`c-rate`       AS cRate,
+        dl.cycle          AS cycle,
+        dl.distance       AS distance,
+        dl.status         AS status,    <!-- ✅ status는 data_logs에서 가져옴 -->
+        t.from_loc        AS fromLoc,
+        t.to_loc          AS toLoc
+        FROM model_infos mi
+        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+        LEFT JOIN tasks t ON t.task_id = dl.task_id
+        WHERE mi.model_infos_id = #{modelInfosId}
+        ORDER BY dl.timestamp DESC
+        LIMIT 1
+    </select>
+
+    <!-- 최근 10개의 온도 로그 -->
+    <select id="getTemperatureLogs" resultType="map">
+        SELECT temp, timestamp
+        FROM data_logs
+        WHERE model_infos_id = #{modelInfosId}
+        ORDER BY timestamp DESC
+        LIMIT 10
+    </select>
+
+    <!-- 오늘 상태별 Count -->
+    <select id="getTodayStatusCount" resultType="map">
+        SELECT
+        COUNT(*) AS totalCount,
+        SUM(CASE WHEN status = 'Driving' THEN 1 ELSE 0 END) AS runCount,
+        SUM(CASE WHEN status = 'Waiting' THEN 1 ELSE 0 END) AS waitCount,
+        SUM(CASE WHEN status = 'Unloading' OR status='complete' THEN 1 ELSE 0 END) AS loadCount,
+        SUM(CASE WHEN status = 'Charge' THEN 1 ELSE 0 END) AS chargeCount,
+        SUM(CASE WHEN status = 'Cooling' THEN 1 ELSE 0 END) AS coolingCount
+        FROM data_logs
+        WHERE model_infos_id = #{modelInfosId}
+        AND DATE(timestamp) = CURDATE()
+    </select>
+
 </mapper>
