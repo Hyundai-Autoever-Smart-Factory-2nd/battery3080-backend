@@ -2,18 +2,18 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.EquipmentDetailResponse;
 import com.example.demo.service.EquipmentService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.EquipmentStatusPageResponse;
 
 @RestController
 @RequestMapping("/api/equipments")
+@RequiredArgsConstructor
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
-
-    public EquipmentController(EquipmentService equipmentService) {
-        this.equipmentService = equipmentService;
-    }
 
     /**
      * 전체 장비 리스트 조회
