@@ -3,17 +3,19 @@ package com.example.demo.mapper;
 
 import com.example.demo.dto.EquipmentDetailResponse;
 import com.example.demo.dto.EquipmentStatusResponse;
-import com.example.demo.model.Equipment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface EquipmentMapper {
-    List<EquipmentStatusResponse> findByEquipmentAndFactory(
+    // 장비별, 공장별, 상태별 조회 (페이징 포함)
+    List<EquipmentStatusResponse> findByEquipmentAndFactoryWithStatus(
             @Param("equipmentId") Long equipmentId,
             @Param("factoryId") Long factoryId,
+            @Param("status") String status,
             @Param("offset") int offset,
             @Param("size") int size
     );
