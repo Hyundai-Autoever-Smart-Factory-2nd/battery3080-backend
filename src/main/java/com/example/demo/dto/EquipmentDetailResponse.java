@@ -68,5 +68,4 @@ public class EquipmentDetailResponse {
         this.lastUpdated = lastUpdated;
         this.logs = logs;
     }
-
 }
