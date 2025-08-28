@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.EquipmentStatusPageResponse;
+import com.example.demo.global.ResponseDTO;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/equipments")
