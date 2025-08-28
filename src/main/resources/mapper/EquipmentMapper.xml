@@ -13,11 +13,8 @@
                     select="com.example.demo.mapper.ModelMapper.findByEquipmentId"/>
     </resultMap>
 
-    <select id="findAll" resultMap="EquipmentResultMap">
-        SELECT * FROM equipments
-    </select>
-
-    <select id="findByEquipmentAndFactory"
+    <!-- 장비별, 공장별, 상태별 조회 (페이징 포함) -->
+    <select id="findByEquipmentAndFactoryWithStatus"
             resultType="com.example.demo.dto.EquipmentStatusResponse">
         SELECT
             e.equipment_id    AS equipmentId,
@@ -25,7 +22,12 @@
             mi.model_num      AS modelNum,
             mi.model_infos_id AS modelInfosId,
             dl.`c-rate`       AS cRate,
-            dl.temp           AS temp
+            dl.temp           AS temp,
+            CASE 
+                WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'danger'
+                WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'warning'
+                ELSE 'good'
+            END AS status
         FROM equipments e
         JOIN models m ON e.equipment_id = m.equipment_id
         JOIN model_infos mi ON m.model_id = mi.model_id
@@ -33,36 +35,46 @@
         WHERE e.equipment_id = #{equipmentId}
         AND mi.factory_id = #{factoryId}
         AND dl.timestamp = (
-        SELECT MAX(dl2.timestamp)
-        FROM data_logs dl2
-        WHERE dl2.model_infos_id = mi.model_infos_id
+            SELECT MAX(dl2.timestamp)
+            FROM data_logs dl2
+            WHERE dl2.model_infos_id = mi.model_infos_id
+        )
+        AND (
+            CASE 
+                WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'danger'
+                WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'warning'
+                ELSE 'good'
+            END = #{status}
         )
         ORDER BY mi.model_infos_id
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="countByEquipmentAndFactory" resultType="int">
+    <!-- 상태별 총 개수 조회 -->
+    <select id="countByEquipmentAndFactoryWithStatus" resultType="int">
         SELECT COUNT(*)
-        FROM model_infos mi
-        JOIN models m ON mi.model_id = m.model_id
-        JOIN equipments e ON m.equipment_id = e.equipment_id
-        WHERE e.equipment_id = #{equipmentId}
-        AND mi.factory_id = #{factoryId}
+        FROM (
+            SELECT 1
+            FROM equipments e
+            JOIN models m ON e.equipment_id = m.equipment_id
+            JOIN model_infos mi ON m.model_id = mi.model_id
+            JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+            WHERE e.equipment_id = #{equipmentId}
+            AND mi.factory_id = #{factoryId}
+            AND dl.timestamp = (
+                SELECT MAX(dl2.timestamp)
+                FROM data_logs dl2
+                WHERE dl2.model_infos_id = mi.model_infos_id
+            )
+            AND (
+                CASE 
+                    WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'warning'
+                    WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'danger'
+                    ELSE 'good'
+                END = #{status}
+            )
+        ) AS temp_table
     </select>
-
-
-    <insert id="insert" parameterType="com.example.demo.model.Equipment"
-            useGeneratedKeys="true" keyProperty="equipmentId">
-        INSERT INTO equipments(name) VALUES(#{name})
-    </insert>
-
-    <update id="update" parameterType="com.example.demo.model.Equipment">
-        UPDATE equipments SET name = #{name}
-        WHERE equipment_id = #{equipmentId}
-    </update>
-
-    <delete id="delete" parameterType="long">
-        DELETE FROM equipments WHERE equipment_id = #{equipmentId}
-    </delete>
 
     <!-- 장비 기본/상세 조회 -->
     <select id="getEquipmentDetail" resultType="com.example.demo.dto.EquipmentDetailResponse">
@@ -81,15 +93,6 @@
         WHERE mi.model_infos_id = #{modelInfosId}
         ORDER BY dl.timestamp DESC
         LIMIT 1
-    </select>
-
-    <!-- 최근 10개의 온도 로그 -->
-    <select id="getTemperatureLogs" resultType="map">
-        SELECT temp, timestamp
-        FROM data_logs
-        WHERE model_infos_id = #{modelInfosId}
-        ORDER BY timestamp DESC
-        LIMIT 10
     </select>
 
     <!-- 오늘 상태별 Count -->
