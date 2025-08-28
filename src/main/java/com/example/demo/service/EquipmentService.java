@@ -1,18 +1,16 @@
 package com.example.demo.service;
+import com.example.demo.dto.EquipmentStatusPageResponse;
 
 import com.example.demo.dto.EquipmentDetailResponse;
-import com.example.demo.dto.EquipmentStatusGroupedResponse;
 import com.example.demo.dto.EquipmentStatusResponse;
 import com.example.demo.mapper.EquipmentMapper;
 import com.example.demo.mapper.ModelInfoMapper;
-import com.example.demo.model.Equipment;
 import com.example.demo.model.ModelInfo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -27,71 +25,92 @@ public class EquipmentService {
         this.equipmentMapper = equipmentMapper;
         this.modelInfoMapper = modelInfoMapper;
     }
+//    public List<EquipmentStatusResponse> getEquipmentStatusByType(
+//            Long equipmentId, Long factoryId, int page, int size, String statusType) {
+public EquipmentStatusPageResponse getEquipmentStatusByType(
+        Long equipmentId, Long factoryId, int page, int size, String statusType) {
 
-    public EquipmentStatusGroupedResponse getEquipmentStatus(Long equipmentId, Long factoryId, int page, int size) {
         int offset = page * size;
 
+        // DB에서 장비 목록 조회
         List<EquipmentStatusResponse> rawList =
                 equipmentMapper.findByEquipmentAndFactory(equipmentId, factoryId, offset, size);
 
+        // 상태 계산 후 매핑
         List<EquipmentStatusResponse> updatedList = rawList.stream()
                 .map(item -> {
-                    int temp = random.nextInt(101); // 0~100 랜덤
-                    String status = (temp >= 70) ? "GOOD"
-                            : (temp >= 40) ? "WARNING"
-                            : "DANGER";
+                    double temp = item.getTemp();
+                    double cRate  = item.getCRate();
+
+                    String status
+                            = (item.getTemp() <= 0 || item.getTemp() >= 60) ? "DANGER" :
+                            ((item.getTemp() > 0 && item.getTemp() <= 15) || (item.getTemp() > 40 && item.getTemp() < 60)) ? "WARNING" :
+                                    "GOOD";
                     return new EquipmentStatusResponse(
                             item.getEquipmentId(),
-                            item.getName(),
+                            item.getModelInfosId(),
                             item.getModelNum(),
-                            temp,
+                            item.getTemp(),
+                            item.getCRate(),
                             status
                     );
                 })
                 .collect(Collectors.toList());
 
-        List<EquipmentStatusResponse> goodList = updatedList.stream()
-                .filter(e -> "GOOD".equals(e.getStatus()))
+        // 요청한 상태만 필터링
+        List<EquipmentStatusResponse> filteredList = updatedList.stream()
+                .filter(e -> e.getStatus().equalsIgnoreCase(statusType))
+                .collect(Collectors.toList());
+
+        int totalCount = filteredList.size(); // 상태별 총 개수
+
+        // 페이징 적용
+        List<EquipmentStatusResponse> pagedList = filteredList.stream()
                 .skip((long) page * size)
                 .limit(size)
                 .collect(Collectors.toList());
 
-        List<EquipmentStatusResponse> warningList = updatedList.stream()
-                .filter(e -> "WARNING".equals(e.getStatus()))
-                .skip((long) page * size)
-                .limit(size)
-                .collect(Collectors.toList());
-
-        List<EquipmentStatusResponse> dangerList = updatedList.stream()
-                .filter(e -> "DANGER".equals(e.getStatus()))
-                .skip((long) page * size)
-                .limit(size)
-                .collect(Collectors.toList());
-
-        return new EquipmentStatusGroupedResponse(goodList, warningList, dangerList);
+        // totalCount + data 반환
+        return new EquipmentStatusPageResponse(totalCount, pagedList);
     }
-
-
     public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
-        ModelInfo modelInfo = modelInfoMapper.findById(modelInfosId);
+        EquipmentDetailResponse detail = equipmentMapper.getEquipmentDetail(modelInfosId);
 
-        return new EquipmentDetailResponse(
-                modelInfo.getModelInfosId(),
-                modelInfo.getModelNum(),
-                "GOOD",
-                85,
-                LocalDateTime.now(),
-                List.of("log1", "log2", "log3")
-        );
+        // ✅ 온도 로그 변환 부분
+        List<Map<String, Object>> rawTempLogs = equipmentMapper.getTemperatureLogs(modelInfosId);
+        List<List<Object>> formattedLogs = rawTempLogs.stream()
+                .map(entry -> List.of(
+                        entry.get("temp"),      // 온도 값
+                        entry.get("timestamp")  // 시간 값
+                ))
+                .toList();
+        detail.setTempLogs(formattedLogs);
+
+        // ✅ 오늘 상태별 카운트 매핑
+        Map<String, Object> statusCount = equipmentMapper.getTodayStatusCount(modelInfosId);
+        detail.setTotalCount(((Number) statusCount.get("totalCount")).intValue());
+        detail.setRunCount(((Number) statusCount.get("runCount")).intValue());
+        detail.setWaitCount(((Number) statusCount.get("waitCount")).intValue());
+        detail.setLoadCount(((Number) statusCount.get("loadCount")).intValue());
+        detail.setChargeCount(((Number) statusCount.get("chargeCount")).intValue());
+        detail.setCoolingCount(((Number) statusCount.get("coolingCount")).intValue());
+
+        return detail;
     }
-}
 
-//        List<Equipment> goodList = equipmentMapper.findByEquipmentAndFactory(equipmentId, factoryId, offset, size);
-//        List<Equipment> warningList = List.of(); // TODO: 상태 조건 로직 추가
-//        List<Equipment> dangerList = List.of();  // TODO: 상태 조건 로직 추가
+//    public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
+//        ModelInfo modelInfo = modelInfoMapper.findById(modelInfosId);
 //
-//        return new EquipmentStatusResponse(goodList, warningList, dangerList);
+//        return new EquipmentDetailResponse(
+//                modelInfo.getModelInfosId(),
+//                modelInfo.getModelNum(),
+//                "GOOD",
+//                85,
+//                LocalDateTime.now(),
+//                List.of("log1", "log2", "log3")
+//        );
 //    }
+}
 
 
 

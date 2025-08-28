@@ -1,18 +1,16 @@
 
 package com.example.demo.mapper;
 
+import com.example.demo.dto.EquipmentDetailResponse;
 import com.example.demo.dto.EquipmentStatusResponse;
 import com.example.demo.model.Equipment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface EquipmentMapper {
-    List<Equipment> findAll();  // 전체 장비 조회
-
-    Equipment findById(@Param("equipmentId") Long equipmentId);// 특정 장비 조회
-
     List<EquipmentStatusResponse> findByEquipmentAndFactory(
             @Param("equipmentId") Long equipmentId,
             @Param("factoryId") Long factoryId,
@@ -20,9 +18,12 @@ public interface EquipmentMapper {
             @Param("size") int size
     );
 
-    void insert(Equipment equipment);  // 신규 장비 등록
+    // 장비 기본/상세 조회
+    EquipmentDetailResponse getEquipmentDetail(@Param("modelInfosId") Long modelInfosId);
 
-    void update(Equipment equipment);  // 장비 수정
+    // 온도 로그 최근 10개
+    List<Map<String, Object>> getTemperatureLogs(@Param("modelInfosId") Long modelInfosId);
 
-    void delete(@Param("equipmentId") Long equipmentId); // 장비 삭제
+    // 오늘 상태별 카운트
+    Map<String, Object> getTodayStatusCount(@Param("modelInfosId") Long modelInfosId);// 장비 삭제
 }

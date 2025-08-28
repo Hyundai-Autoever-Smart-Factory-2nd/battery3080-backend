@@ -43,4 +43,46 @@
     <delete id="delete" parameterType="long">
         DELETE FROM model_infos WHERE model_infos_id = #{modelInfosId}
     </delete>
+
+    <!-- 장비 기본/상세 조회 -->
+    <select id="getEquipmentDetail" resultType="com.example.demo.dto.EquipmentDetailResponse">
+        SELECT
+        mi.model_num AS modelNum,
+        dl.battery   AS battery,
+        dl.cycle     AS cycle,
+        dl.distance  AS distance,
+        t.from_loc   AS fromLoc,
+        t.to_loc     AS toLoc,
+        t.status     AS status
+        FROM model_infos mi
+        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+        LEFT JOIN tasks t ON t.model_infos_id = mi.model_infos_id
+        WHERE mi.model_infos_id = #{modelInfosId}
+        ORDER BY dl.timestamp DESC
+        LIMIT 1
+    </select>
+
+    <!-- 온도 변화량 최근 10개 -->
+    <select id="getTemperatureLogs" resultType="map">
+        SELECT temp, timestamp
+        FROM data_logs
+        WHERE model_infos_id = #{modelInfosId}
+        ORDER BY timestamp DESC
+        LIMIT 10
+    </select>
+
+    <!-- 오늘 상태별 Count -->
+    <select id="getTodayStatusCount" resultType="map">
+        SELECT
+        COUNT(*) AS totalCount,
+        SUM(CASE WHEN status = 'driving' THEN 1 ELSE 0 END) AS runCount,
+        SUM(CASE WHEN status = 'waiting' THEN 1 ELSE 0 END) AS waitCount,
+        SUM(CASE WHEN status = 'unloading' OR status='complete' THEN 1 ELSE 0 END) AS loadCount,
+        SUM(CASE WHEN status = 'charging' THEN 1 ELSE 0 END) AS chargeCount,
+        SUM(CASE WHEN status = 'cooling' THEN 1 ELSE 0 END) AS coolingCount
+        FROM data_logs
+        WHERE model_infos_id = #{modelInfosId}
+        AND DATE(timestamp) = CURDATE()
+    </select>
+
 </mapper>
