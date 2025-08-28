@@ -20,33 +20,35 @@
     <select id="findByEquipmentAndFactory"
             resultType="com.example.demo.dto.EquipmentStatusResponse">
         SELECT
-            e.equipment_id AS equipmentId,
-            e.name AS name,
-            mi.model_num AS modelNum
+        e.equipment_id    AS equipmentId,
+        e.name            AS name,
+        mi.model_num      AS modelNum,
+        mi.model_infos_id AS modelInfosId,
+        dl.`c-rate`       AS cRate,
+        dl.temp           AS temp
         FROM equipments e
         JOIN models m ON e.equipment_id = m.equipment_id
         JOIN model_infos mi ON m.model_id = mi.model_id
+        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+        WHERE e.equipment_id = #{equipmentId}
+        AND mi.factory_id = #{factoryId}
+        AND dl.timestamp = (
+        SELECT MAX(dl2.timestamp)
+        FROM data_logs dl2
+        WHERE dl2.model_infos_id = mi.model_infos_id
+        )
+        ORDER BY mi.model_infos_id
+    </select>
+
+    <select id="countByEquipmentAndFactory" resultType="int">
+        SELECT COUNT(*)
+        FROM model_infos mi
+        JOIN models m ON mi.model_id = m.model_id
+        JOIN equipments e ON m.equipment_id = e.equipment_id
         WHERE e.equipment_id = #{equipmentId}
         AND mi.factory_id = #{factoryId}
     </select>
 
-<!--    &lt;!&ndash; EquipmentMapper.xml &ndash;&gt;-->
-<!--    <select id="findByEquipmentAndFactory" resultType="com.example.demo.model.Equipment">-->
-<!--        SELECT-->
-<!--        e.equipment_id AS equipmentId,-->
-<!--        e.name AS name-->
-<!--        FROM equipments e-->
-<!--        JOIN models m ON e.equipment_id = m.equipment_id-->
-<!--        JOIN model_infos mi ON m.model_id = mi.model_id-->
-<!--        WHERE e.equipment_id = #{equipmentId}-->
-<!--        AND mi.factory_id = #{factoryId}-->
-<!--        LIMIT #{size} OFFSET #{offset}-->
-
-<!--    </select>-->
-
-    <select id="findById" parameterType="long" resultMap="EquipmentResultMap">
-        SELECT * FROM equipments WHERE equipment_id = #{equipmentId}
-    </select>
 
     <insert id="insert" parameterType="com.example.demo.model.Equipment"
             useGeneratedKeys="true" keyProperty="equipmentId">
