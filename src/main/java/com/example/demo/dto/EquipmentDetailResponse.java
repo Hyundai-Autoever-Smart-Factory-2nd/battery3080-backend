@@ -1,71 +1,36 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
+import lombok.*;
+
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class EquipmentDetailResponse {
+
+    // 장비 기본 정보
     private Long modelInfosId;
     private String modelNum;
-    private String status;     // GOOD / WARNING / DANGER
-    private int battery;       // 배터리 잔량(%)
-    private LocalDateTime lastUpdated;
-    private List<String> logs; // 로그 리스트
+    private double cRate;    // 배터리 잔량
+    private Integer cycle;      // 배터리 사이클
+    private double distance;   // 누적 거리
 
-    public List<String> getLogs() {
-        return logs;
-    }
+    // 현재 작업 상태
+    private String fromLoc;
+    private String toLoc;
+    private String status;      // waiting, unloading, driving, complete, charging, cooling
 
-    public void setLogs(List<String> logs) {
-        this.logs = logs;
-    }
+    // 온도 로그 (최근 10개) → [ [온도, 시간], ... ]
+    private List<List<Object>> tempLogs;
 
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
-    }
+    // 금일 가동률
+    private Integer totalCount;
+    private Integer runCount;
+    private Integer waitCount;
+    private Integer loadCount;
+    private Integer chargeCount;
+    private Integer coolingCount;
 
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public int getBattery() {
-        return battery;
-    }
-
-    public void setBattery(int battery) {
-        this.battery = battery;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getModelNum() {
-        return modelNum;
-    }
-
-    public void setModelNum(String modelNum) {
-        this.modelNum = modelNum;
-    }
-
-    public Long getModelInfosId() {
-        return modelInfosId;
-    }
-
-    public void setModelInfosId(Long modelInfosId) {
-        this.modelInfosId = modelInfosId;
-    }
-
-    public EquipmentDetailResponse(Long modelInfosId, String modelNum, String status,
-                                   int battery, LocalDateTime lastUpdated, List<String> logs) {
-        this.modelInfosId = modelInfosId;
-        this.modelNum = modelNum;
-        this.status = status;
-        this.battery = battery;
-        this.lastUpdated = lastUpdated;
-        this.logs = logs;
-    }
 }
