@@ -6,31 +6,31 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface HomeMapper {
     
-    @Select("SELECT COUNT(DISTINCT m.model_id)" +
-            "FROM model_infos mi" +
-            "JOIN models m ON mi.model_id = m.model_id" +
-            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+    @Select("SELECT COUNT(DISTINCT m.model_id) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
             "WHERE dl.temp>70 AND m.equipment_id = 1")
     Long getAgvBatteryWrong();
 
-    @Select("SELECT COUNT(DISTINCT m.model_id)" +
-            "FROM model_infos mi" +
-            "JOIN models m ON mi.model_id = m.model_id" +
-            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+    @Select("SELECT COUNT(DISTINCT m.model_id) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
             "WHERE dl.temp>70 AND m.equipment_id = 3")
     Long getRobotArmBatteryWrong();
 
-    @Select("SELECT COUNT(DISTINCT m.model_id)" +
-            "FROM model_infos mi" +
-            "JOIN models m ON mi.model_id = m.model_id" +
-            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+    @Select("SELECT COUNT(DISTINCT m.model_id) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
             "WHERE dl.temp>70 AND m.equipment_id = 2")
     Long getLiftCarBatteryWrong();
 
-    @Select("SELECT COUNT(DISTINCT m.model_id)" +
-            "FROM model_infos mi" +
-            "JOIN models m ON mi.model_id = m.model_id" +
-            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id" +
+    @Select("SELECT COUNT(DISTINCT m.model_id) " +
+            "FROM model_infos mi " +
+            "JOIN models m ON mi.model_id = m.model_id " +
+            "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
             "WHERE dl.temp>70 AND m.equipment_id = 4")
     Long getEtcBatteryWrong();
 
@@ -98,7 +98,7 @@ public interface HomeMapper {
             "FROM model_infos mi " +
             "JOIN models m ON mi.model_id = m.model_id " +
             "JOIN data_logs dl ON mi.model_infos_id = dl.model_infos_id " +
-            "WHERE mi.factory_id = 2 AND m.equipment_id = 3 " +
+            "WHERE mi.factory_id = 2 AND m.equipment_id = 2 " +
             "AND dl.timestamp = ( " +
             "    SELECT MAX(dl2.timestamp) " +
             "    FROM data_logs dl2 " +
