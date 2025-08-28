@@ -5,13 +5,6 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface HomeMapper {
-
-    @Select("SELECT AVG(m.speed) " +
-            "FROM models m " +
-            "JOIN model_infos mi ON m.model_id = mi.model_id " +
-            "WHERE mi.factory_id = '1'")
-    Double getFactory1AvgSpeed();
-
     
     @Select("SELECT COUNT(DISTINCT m.model_id)" +
             "FROM model_infos mi" +
