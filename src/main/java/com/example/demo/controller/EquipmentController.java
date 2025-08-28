@@ -18,20 +18,27 @@ public class EquipmentController {
     private final EquipmentService equipmentService;
 
     /**
-     * 전체 장비 리스트 조회
-     * Request: GET /api/equipments/status?equipmentId=1&factoryId=1&page=0&size=6
-     * Response: List<EquipmentStatusResponse>
+     * 장비 상태별 리스트 조회 API
+     * Request: GET /api/equipments/{equipmentId}/factories/{factoryId}?status=(good / warning / danger)&page=0&size=6
+     * Response: ResponseEntity<ResponseDTO<EquipmentStatusPageResponse>>
      */
-
-    @GetMapping("/{equipmentId}/factories/{factoryId}/status/{status}")
-    public EquipmentStatusPageResponse getEquipmentStatusByType(
+    @GetMapping("/{equipmentId}/factories/{factoryId}")
+    public ResponseEntity<ResponseDTO<EquipmentStatusPageResponse>> getEquipmentStatusByType(
             @PathVariable Long equipmentId,
             @PathVariable Long factoryId,
-            @PathVariable String status,
+            @RequestParam String status,  // 양호(good), 주의(warning), 경고(danger)
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
 
-        return equipmentService.getEquipmentStatusByType(equipmentId, factoryId, page, size, status);
+        EquipmentStatusPageResponse data = equipmentService.getEquipmentStatusByType(equipmentId, factoryId, page, size, status);
+        
+        ResponseDTO<EquipmentStatusPageResponse> response = ResponseDTO.<EquipmentStatusPageResponse>builder()
+                .success(true)
+                .status(200)
+                .data(data)
+                .build();
+        
+        return ResponseEntity.ok(response);
     }
 
     /**
