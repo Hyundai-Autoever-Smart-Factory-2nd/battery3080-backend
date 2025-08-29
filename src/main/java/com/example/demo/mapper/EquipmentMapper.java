@@ -35,7 +35,7 @@ public interface EquipmentMapper {
     EquipmentDetailResponse getEquipmentDetail(@Param("modelInfosId") Long modelInfosId);
 
     // 온도 로그 최근 10개
-    @Select("SELECT temp, timestamp FROM data_logs WHERE model_infos_id = #{modelInfosId} ORDER BY timestamp DESC LIMIT 10")
+    @Select("SELECT temp, created_at FROM data_logs WHERE model_infos_id = #{modelInfosId} ORDER BY created_at DESC LIMIT 10")
     List<Map<String, Object>> getTemperatureLogs(@Param("modelInfosId") Long modelInfosId);
 
     // 오늘 상태별 카운트

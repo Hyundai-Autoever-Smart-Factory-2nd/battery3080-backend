@@ -35,7 +35,7 @@
                 dl.model_infos_id,
                 dl.`c-rate`,
                 dl.temp,
-                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.timestamp DESC) as rn
+                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.created_at DESC) as rn
             FROM data_logs dl
         ) latest_dl ON mi.model_infos_id = latest_dl.model_infos_id AND latest_dl.rn = 1
         WHERE e.equipment_id = #{equipmentId}
@@ -68,7 +68,7 @@
             SELECT 
                 dl.model_infos_id,
                 dl.temp,
-                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.timestamp DESC) as rn
+                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.created_at DESC) as rn
             FROM data_logs dl
         ) latest_dl ON mi.model_infos_id = latest_dl.model_infos_id AND latest_dl.rn = 1
         WHERE e.equipment_id = #{equipmentId}
@@ -104,7 +104,7 @@
         JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
         LEFT JOIN tasks t ON t.task_id = dl.task_id
         WHERE mi.model_infos_id = #{modelInfosId}
-        ORDER BY dl.timestamp DESC
+        ORDER BY dl.created_at DESC
         LIMIT 1
     </select>
 
@@ -119,7 +119,7 @@
         SUM(CASE WHEN status = 'Cooling' THEN 1 ELSE 0 END) AS coolingCount
         FROM data_logs
         WHERE model_infos_id = #{modelInfosId}
-        AND DATE(timestamp) = CURDATE()
+        AND DATE(created_at) = CURDATE()
     </select>
 
 </mapper>
