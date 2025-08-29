@@ -17,28 +17,53 @@
         SELECT * FROM equipments
     </select>
 
+<!--    <select id="findByEquipmentAndFactory"-->
+<!--            resultType="com.example.demo.dto.EquipmentStatusResponse">-->
+<!--        SELECT-->
+<!--            e.equipment_id    AS equipmentId,-->
+<!--            e.name            AS name,-->
+<!--            mi.model_num      AS modelNum,-->
+<!--            mi.model_infos_id AS modelInfosId,-->
+<!--            dl.`c-rate`       AS cRate,-->
+<!--            dl.temp           AS temp-->
+<!--        FROM equipments e-->
+<!--        JOIN models m ON e.equipment_id = m.equipment_id-->
+<!--        JOIN model_infos mi ON m.model_id = mi.model_id-->
+<!--        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id-->
+<!--        WHERE e.equipment_id = #{equipmentId}-->
+<!--        AND mi.factory_id = #{factoryId}-->
+<!--        AND dl.timestamp = (-->
+<!--            SELECT MAX(dl2.timestamp)-->
+<!--            FROM data_logs dl2-->
+<!--            WHERE dl2.model_infos_id = mi.model_infos_id-->
+<!--        )-->
+<!--        ORDER BY mi.model_infos_id-->
+<!--    </select>-->
+
     <select id="findByEquipmentAndFactory"
             resultType="com.example.demo.dto.EquipmentStatusResponse">
         SELECT
-            e.equipment_id    AS equipmentId,
-            e.name            AS name,
-            mi.model_num      AS modelNum,
-            mi.model_infos_id AS modelInfosId,
-            dl.`c-rate`       AS cRate,
-            dl.temp           AS temp
+        e.equipment_id    AS equipmentId,
+        mi.model_num      AS modelNum,
+        mi.model_infos_id AS modelInfosId,
+        dl.`c-rate`       AS cRate,
+        dl.temp           AS temp
         FROM equipments e
-        JOIN models m ON e.equipment_id = m.equipment_id
-        JOIN model_infos mi ON m.model_id = mi.model_id
-        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+        JOIN models m       ON e.equipment_id = m.equipment_id
+        JOIN model_infos mi ON m.model_id     = mi.model_id
+        JOIN (
+        SELECT model_infos_id, MAX(timestamp) AS max_ts
+        FROM data_logs
+        GROUP BY model_infos_id
+        ) mx ON mx.model_infos_id = mi.model_infos_id
+        JOIN data_logs dl
+        ON dl.model_infos_id = mx.model_infos_id
+        AND dl.timestamp      = mx.max_ts
         WHERE e.equipment_id = #{equipmentId}
-        AND mi.factory_id = #{factoryId}
-        AND dl.timestamp = (
-        SELECT MAX(dl2.timestamp)
-        FROM data_logs dl2
-        WHERE dl2.model_infos_id = mi.model_infos_id
-        )
+        AND mi.factory_id  = #{factoryId}
         ORDER BY mi.model_infos_id
     </select>
+
 
     <select id="countByEquipmentAndFactory" resultType="int">
         SELECT COUNT(*)
@@ -85,10 +110,11 @@
 
     <!-- 최근 10개의 온도 로그 -->
     <select id="getTemperatureLogs" resultType="map">
-        SELECT temp, timestamp
-        FROM data_logs
-        WHERE model_infos_id = #{modelInfosId}
-        ORDER BY timestamp DESC
+        SELECT dl.temp AS temp,
+                dl.timestamp AS timestamp
+        FROM data_logs dl
+        WHERE dl.model_infos_id = #{modelInfosId}
+        ORDER BY dl.timestamp DESC
         LIMIT 10
     </select>
 
