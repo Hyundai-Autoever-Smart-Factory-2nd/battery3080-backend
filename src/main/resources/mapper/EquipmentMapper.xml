@@ -18,33 +18,41 @@
             resultType="com.example.demo.dto.EquipmentStatusResponse">
         SELECT
             e.equipment_id    AS equipmentId,
-            e.name            AS name,
             mi.model_num      AS modelNum,
             mi.model_infos_id AS modelInfosId,
-            dl.`c-rate`       AS cRate,
-            dl.temp           AS temp,
+            latest_dl.`c-rate` AS cRate,
+            latest_dl.temp    AS temp,
             CASE 
-                WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'danger'
-                WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'warning'
-                ELSE 'good'
+                WHEN latest_dl.temp BETWEEN 15 AND 40 THEN 'good'
+                WHEN (latest_dl.temp BETWEEN 0 AND 15) OR (latest_dl.temp BETWEEN 40 AND 60) THEN 'warning'
+                ELSE 'danger'
             END AS status
         FROM equipments e
         JOIN models m ON e.equipment_id = m.equipment_id
         JOIN model_infos mi ON m.model_id = mi.model_id
-        JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
+        JOIN (
+            SELECT 
+                dl.model_infos_id,
+                dl.`c-rate`,
+                dl.temp,
+                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.timestamp DESC) as rn
+            FROM data_logs dl
+        ) latest_dl ON mi.model_infos_id = latest_dl.model_infos_id AND latest_dl.rn = 1
         WHERE e.equipment_id = #{equipmentId}
         AND mi.factory_id = #{factoryId}
-        AND dl.timestamp = (
-            SELECT MAX(dl2.timestamp)
-            FROM data_logs dl2
-            WHERE dl2.model_infos_id = mi.model_infos_id
-        )
         AND (
-            CASE 
-                WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'danger'
-                WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'warning'
-                ELSE 'good'
-            END = #{status}
+            <!-- good: 15~40 -->
+            <if test="status == 'good' and minTemp != null and maxTemp != null">
+                latest_dl.temp BETWEEN #{minTemp} AND #{maxTemp}
+            </if>
+            <!-- warning: 0~15, 40~60 -->
+            <if test="status == 'warning'">
+                (latest_dl.temp BETWEEN 0 AND 15) OR (latest_dl.temp BETWEEN 40 AND 60)
+            </if>
+            <!-- danger: ~0, 60~ -->
+            <if test="status == 'danger'">
+                latest_dl.temp &lt; 0 OR latest_dl.temp &gt; 60
+            </if>
         )
         ORDER BY mi.model_infos_id
         LIMIT #{size} OFFSET #{offset}
@@ -53,27 +61,32 @@
     <!-- 상태별 총 개수 조회 -->
     <select id="countByEquipmentAndFactoryWithStatus" resultType="int">
         SELECT COUNT(*)
-        FROM (
-            SELECT 1
-            FROM equipments e
-            JOIN models m ON e.equipment_id = m.equipment_id
-            JOIN model_infos mi ON m.model_id = mi.model_id
-            JOIN data_logs dl ON dl.model_infos_id = mi.model_infos_id
-            WHERE e.equipment_id = #{equipmentId}
-            AND mi.factory_id = #{factoryId}
-            AND dl.timestamp = (
-                SELECT MAX(dl2.timestamp)
-                FROM data_logs dl2
-                WHERE dl2.model_infos_id = mi.model_infos_id
-            )
-            AND (
-                CASE 
-                    WHEN dl.temp &lt;= 0 OR dl.temp &gt;= 60 THEN 'warning'
-                    WHEN (dl.temp &gt; 0 AND dl.temp &lt;= 15) OR (dl.temp &gt; 40 AND dl.temp &lt; 60) THEN 'danger'
-                    ELSE 'good'
-                END = #{status}
-            )
-        ) AS temp_table
+        FROM equipments e
+        JOIN models m ON e.equipment_id = m.equipment_id
+        JOIN model_infos mi ON m.model_id = mi.model_id
+        JOIN (
+            SELECT 
+                dl.model_infos_id,
+                dl.temp,
+                ROW_NUMBER() OVER (PARTITION BY dl.model_infos_id ORDER BY dl.timestamp DESC) as rn
+            FROM data_logs dl
+        ) latest_dl ON mi.model_infos_id = latest_dl.model_infos_id AND latest_dl.rn = 1
+        WHERE e.equipment_id = #{equipmentId}
+        AND mi.factory_id = #{factoryId}
+        AND (
+            <!-- good: 15~40 -->
+            <if test="status == 'good' and minTemp != null and maxTemp != null">
+                latest_dl.temp BETWEEN #{minTemp} AND #{maxTemp}
+            </if>
+            <!-- warning: 0~15, 40~60 -->
+            <if test="status == 'warning'">
+                (latest_dl.temp BETWEEN 0 AND 15) OR (latest_dl.temp BETWEEN 40 AND 60)
+            </if>
+            <!-- danger: ~0, 60~ -->
+            <if test="status == 'danger'">
+                latest_dl.temp &lt; 0 OR latest_dl.temp &gt; 60
+            </if>
+        )
     </select>
 
     <!-- 장비 기본/상세 조회 -->
