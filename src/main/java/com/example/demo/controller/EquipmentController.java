@@ -8,6 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.EquipmentStatusPageResponse;
 import com.example.demo.global.ResponseDTO;
+
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 
 @RestController
@@ -44,13 +48,20 @@ public class EquipmentController {
     /**
      * 장비 상세 조회 API
      * Request: GET /api/equipments/{modelInfosId}
-     * Response: EquipmentDetailResponse
+     * Response: ResponseEntity<ResponseDTO<EquipmentDetailResponse>>
      */
-
     @GetMapping("/{modelInfosId}")
-    public EquipmentDetailResponse getEquipmentDetail(
+    public ResponseEntity<ResponseDTO<EquipmentDetailResponse>> getEquipmentDetail(
             @PathVariable("modelInfosId") Long modelInfosId
     ) {
-        return equipmentService.getEquipmentDetail(modelInfosId);
+        EquipmentDetailResponse data = equipmentService.getEquipmentDetail(modelInfosId);
+        
+        ResponseDTO<EquipmentDetailResponse> response = ResponseDTO.<EquipmentDetailResponse>builder()
+                .success(true)
+                .status(200)
+                .data(data)
+                .build();
+        
+        return ResponseEntity.ok(response);
     }
 }

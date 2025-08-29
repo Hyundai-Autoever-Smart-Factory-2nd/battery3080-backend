@@ -54,17 +54,15 @@ public class EquipmentService {
     public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
         EquipmentDetailResponse detail = equipmentMapper.getEquipmentDetail(modelInfosId);
 
-        // ✅ 온도 로그 변환 부분
         List<Map<String, Object>> rawTempLogs = equipmentMapper.getTemperatureLogs(modelInfosId);
         List<List<Object>> formattedLogs = rawTempLogs.stream()
                 .map(entry -> List.of(
                         entry.get("temp"),      // 온도 값
-                        entry.get("timestamp")  // 시간 값
+                        entry.get("created_at")  // 시간 값
                 ))
                 .toList();
         detail.setTempLogs(formattedLogs);
 
-        // ✅ 오늘 상태별 카운트 매핑
         Map<String, Object> statusCount = equipmentMapper.getTodayStatusCount(modelInfosId);
         detail.setTotalCount(((Number) statusCount.get("totalCount")).intValue());
         detail.setRunCount(((Number) statusCount.get("runCount")).intValue());
