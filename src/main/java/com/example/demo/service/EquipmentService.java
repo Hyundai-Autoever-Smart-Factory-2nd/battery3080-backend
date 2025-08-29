@@ -5,10 +5,8 @@ import com.example.demo.dto.EquipmentDetailResponse;
 import com.example.demo.dto.EquipmentStatusResponse;
 import com.example.demo.mapper.EquipmentMapper;
 import com.example.demo.mapper.ModelInfoMapper;
-import com.example.demo.model.ModelInfo;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -76,7 +74,7 @@ public EquipmentStatusPageResponse getEquipmentStatusByType(
     public EquipmentDetailResponse getEquipmentDetail(Long modelInfosId) {
         EquipmentDetailResponse detail = equipmentMapper.getEquipmentDetail(modelInfosId);
 
-        // ✅ 온도 로그 변환 부분
+        // 온도 로그 변환 부분
         List<Map<String, Object>> rawTempLogs = equipmentMapper.getTemperatureLogs(modelInfosId);
         List<List<Object>> formattedLogs = rawTempLogs.stream()
                 .map(entry -> List.of(
@@ -86,7 +84,7 @@ public EquipmentStatusPageResponse getEquipmentStatusByType(
                 .toList();
         detail.setTempLogs(formattedLogs);
 
-        // ✅ 오늘 상태별 카운트 매핑
+        // 오늘 상태별 카운트 매핑
         Map<String, Object> statusCount = equipmentMapper.getTodayStatusCount(modelInfosId);
         detail.setTotalCount(((Number) statusCount.get("totalCount")).intValue());
         detail.setRunCount(((Number) statusCount.get("runCount")).intValue());
