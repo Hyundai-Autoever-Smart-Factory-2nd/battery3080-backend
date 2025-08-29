@@ -16,6 +16,8 @@ public interface EquipmentMapper {
             @Param("equipmentId") Long equipmentId,
             @Param("factoryId") Long factoryId,
             @Param("status") String status,
+            @Param("minTemp") Double minTemp,
+            @Param("maxTemp") Double maxTemp,
             @Param("offset") int offset,
             @Param("size") int size
     );
@@ -24,7 +26,9 @@ public interface EquipmentMapper {
     int countByEquipmentAndFactoryWithStatus(
             @Param("equipmentId") Long equipmentId,
             @Param("factoryId") Long factoryId,
-            @Param("status") String status
+            @Param("status") String status,
+            @Param("minTemp") Double minTemp,
+            @Param("maxTemp") Double maxTemp
     );
 
     // 장비 기본/상세 조회

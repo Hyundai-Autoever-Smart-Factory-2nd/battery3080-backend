@@ -22,12 +22,31 @@ public class EquipmentService {
 
         int offset = page * size;
         
+        // 상태에 따른 온도 범위 결정
+        Double minTemp = null;
+        Double maxTemp = null;
+        
+        switch (status.toLowerCase()) {
+            case "good":
+                minTemp = 15.0;
+                maxTemp = 40.0;
+                break;
+            case "warning":
+                // warning은 두 구간이므로 쿼리에서 처리
+                break;
+            case "danger":
+                // danger도 두 구간이므로 쿼리에서 처리
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status: " + status);
+        }
+        
         // DB에서 상태별 장비 목록 조회 (페이징 적용)
         List<EquipmentStatusResponse> equipmentList = 
-            equipmentMapper.findByEquipmentAndFactoryWithStatus(equipmentId, factoryId, status, offset, size);
+            equipmentMapper.findByEquipmentAndFactoryWithStatus(equipmentId, factoryId, status, minTemp, maxTemp, offset, size);
         
         // 총 개수 조회
-        int totalCount = equipmentMapper.countByEquipmentAndFactoryWithStatus(equipmentId, factoryId, status);
+        int totalCount = equipmentMapper.countByEquipmentAndFactoryWithStatus(equipmentId, factoryId, status, minTemp, maxTemp);
         
         return new EquipmentStatusPageResponse(totalCount, equipmentList);
     }
