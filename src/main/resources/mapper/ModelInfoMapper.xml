@@ -48,7 +48,7 @@
     <select id="getEquipmentDetail" resultType="com.example.demo.dto.EquipmentDetailResponse">
         SELECT
         mi.model_num AS modelNum,
-        dl.battery   AS battery,
+        dl.`c-rate`   AS cRate,
         dl.cycle     AS cycle,
         dl.distance  AS distance,
         t.from_loc   AS fromLoc,
